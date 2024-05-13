@@ -1,0 +1,69 @@
+{
+  "name": "url-pattern-parser",
+  "description": "",
+  "version": "0.0.1",
+  "type": "module",
+  "author": "tsctx",
+  "license": "MIT",
+  "sideEffects": false,
+  "module": "./dist/index.mjs",
+  "main": "./dist/index.cjs",
+  "types": "./dist/types/index.d.ts",
+  "readme": "README.md",
+  "exports": {
+    ".": [
+      {
+        "types": "./dist/types/index.d.ts",
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs",
+        "default": "./dist/index.mjs"
+      }
+    ],
+    "./router": [
+      {
+        "types": "./dist/types/router.d.ts",
+        "import": "./dist/router.mjs",
+        "require": "./dist/router.cjs",
+        "default": "./dist/router.mjs"
+      }
+    ]
+  },
+  "typesVersions": {
+    "*": {
+      "router": ["./dist/types/router.d.ts"]
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.7.3",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@swc/core": "^1.5.5",
+    "rollup": "^4.17.2",
+    "rollup-plugin-swc3": "^0.11.2",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "build": "yarn build:rollup && yarn build:types",
+    "prebuild:rollup": "node ./scripts/prebuild.js",
+    "build:rollup": "rollup -c rollup.config.js",
+    "prebuild:types": "node ./scripts/pretypes.js",
+    "build:types": "tsc -p ./tsconfig.types.json",
+    "lint": "biome lint ./",
+    "lint:tsc": "tsc --noEmit",
+    "lint:fix": "biome lint --apply-unsafe ./",
+    "format": "biome format ./",
+    "format:fix": "biome format --write ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsctx/url-pattern-parser.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tsctx/url-pattern-parser/issues"
+  }
+}
