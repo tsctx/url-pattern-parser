@@ -1,32 +1,33 @@
 // @ts-check
 // Plugins
-import { defineConfig } from "rollup";
-import nodeResolve from "@rollup/plugin-node-resolve";
+
+import path from "node:path";
 import cjs from "@rollup/plugin-commonjs";
-import exd from "./plugin/plugin-export-default.js";
+import nodeResolve from "@rollup/plugin-node-resolve";
+import { defineConfig } from "rollup";
+import swc, {
+  defineRollupSwcMinifyOption,
+  defineRollupSwcOption,
+} from "rollup-plugin-swc3";
 import {
   createFileInfo,
   createRequire,
   writeCjsEntryFile,
   writeCjsPackageJson,
+  writeMjsEntryFile,
 } from "./plugin/_utils.js";
-
+import exd from "./plugin/plugin-export-default.js";
 // https://github.com/privatenumber/minification-benchmarks
-import terser from "@rollup/plugin-terser";
-import swc, {
-  defineRollupSwcOption,
-  defineRollupSwcMinifyOption,
-} from "rollup-plugin-swc3";
+// import terser from "@rollup/plugin-terser";
+import minify from "./plugin/swc-minify.js";
 
-import path from "node:path";
-import { writeMjsEntryFile } from "./plugin/_utils.js";
 const { __dirname, __filename } = createFileInfo(import.meta.url);
 const require = createRequire(import.meta.url);
 
 // import pkg from "./package.json" assert { type: "json" };
 const pkg = require("./package.json");
 
-//@ts-ignore
+//@ts-expect-error
 const moduleName = pkg.moduleName || pkg.name;
 
 const basicBanner = `/**
@@ -85,13 +86,15 @@ const Output_MinifyPlugins = [];
 
 /**@type {import("rollup").Plugin[]} */
 const Output_Es_MinifyPlugins = [
-  terser({
-    module: true,
-  }),
+  // terser({module: true}),
+  minify({ module: true }),
 ];
 
 /**@type {import("rollup").Plugin[]} */
-const Output_Cjs_MinifyPlugins = [terser({ module: false })];
+const Output_Cjs_MinifyPlugins = [
+  // terser({ module: false })
+  minify({ module: false }),
+];
 
 /**@type {import("rollup").Plugin[]} */
 const Input_Cjs_Plugins = [];
@@ -113,9 +116,9 @@ const Input_Minify_Cjs_Plugins = [];
 
 /**@type {string[]} */
 const external = [
-  //@ts-ignore
+  //@ts-expect-error
   ...Object.keys(pkg.dependencies || {}),
-  //@ts-ignore
+  //@ts-expect-error
   ...Object.keys(pkg.devDependencies || {}),
 ];
 

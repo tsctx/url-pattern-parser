@@ -16,8 +16,7 @@ class Router<T> {
     }[]
   >;
   constructor() {
-    this.#routes = Object.create(null);
-    this.#routes.ALL = [];
+    this.#routes = Object.setPrototypeOf({ ALL: [] }, null);
   }
   add(method: string, path: string, ...handlers: T[]) {
     const pattern = parse(path);
@@ -39,10 +38,10 @@ class Router<T> {
     path: string,
   ): {
     handlers: T[];
-    params: Record<string, string>;
+    params: Record<string, string>[];
   } | null {
     const handlers = [];
-    const params = Object.create(null);
+    const params = [];
     const target = this.#routes[method] ?? this.#routes.ALL;
     for (let i = 0; i < target.length; ++i) {
       const {
@@ -53,9 +52,11 @@ class Router<T> {
         handlers.push(...targetHandler);
         const match = pattern.exec(path);
         if (match !== null) {
+          const param = Object.create(null);
           for (let j = 0; j < keys.length; ++j) {
-            params[keys[j]] = match[j + 1];
+            param[keys[j]] = match[j + 1];
           }
+          params.push(param);
         }
       }
     }

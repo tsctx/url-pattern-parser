@@ -12,15 +12,12 @@ function parse(str) {
         keys,
         pattern: new RegExp(`${(str[0] === "/" ? str.slice(1) : str).split("/").reduce((pattern, part)=>{
             if (part === "*") {
-                // biome-ignore lint/style/noParameterAssign: <explanation>
                 pattern += "/(?:.*)";
             } else if (part[0] === ":") {
                 const optionally = part[part.length - 1] === "?";
-                // biome-ignore lint/style/noParameterAssign: <explanation>
                 pattern += optionally ? "(?:/([^/]+?))?" : "/([^/]+?)";
                 keys.push(part.slice(1, optionally ? part.length - 1 : part.length));
             } else {
-                // biome-ignore lint/style/noParameterAssign: <explanation>
                 pattern += `/${escapeRegExp(part)}`;
             }
             return pattern;
@@ -28,7 +25,7 @@ function parse(str) {
     };
 }
 function escapeRegExp(str) {
-    return str.replace(/[\\\*\+\.\?\{\}\(\)\[\]\^\$\-\|\/]/g, "\\$&");
+    return str.replace(/[\\*+.?{}()[\]^$\-|/]/g, "\\$&");
 }
 
 // Pattern's parser
@@ -37,8 +34,9 @@ function escapeRegExp(str) {
  */ class Router {
     #routes;
     constructor(){
-        this.#routes = Object.create(null);
-        this.#routes.ALL = [];
+        this.#routes = Object.setPrototypeOf({
+            ALL: []
+        }, null);
     }
     add(method, path, ...handlers) {
         const pattern = parse(path);
@@ -60,7 +58,7 @@ function escapeRegExp(str) {
     }
     match(method, path) {
         const handlers = [];
-        const params = Object.create(null);
+        const params = [];
         const target = this.#routes[method] ?? this.#routes.ALL;
         for(let i = 0; i < target.length; ++i){
             const { pattern: { pattern, keys }, handlers: targetHandler } = target[i];
@@ -68,9 +66,11 @@ function escapeRegExp(str) {
                 handlers.push(...targetHandler);
                 const match = pattern.exec(path);
                 if (match !== null) {
+                    const param = Object.create(null);
                     for(let j = 0; j < keys.length; ++j){
-                        params[keys[j]] = match[j + 1];
+                        param[keys[j]] = match[j + 1];
                     }
+                    params.push(param);
                 }
             }
         }

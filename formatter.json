@@ -1,11 +1,13 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.7.3/schema.json",
+  "root": false,
+  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
   "formatter": {
-    "ignore": [
-      "./dist/*",
-      "./tsconfig.json",
-      "./tsconfig.base.json",
-      "./tsconfig.types.json"
+    "includes": [
+      "**",
+      "!dist/**/*",
+      "!tsconfig.json",
+      "!tsconfig.base.json",
+      "!tsconfig.types.json"
     ]
   },
   "javascript": {
@@ -16,7 +18,7 @@
       "semicolons": "always",
       "lineWidth": 80,
       "quoteStyle": "double",
-      "trailingComma": "all",
+      "trailingCommas": "all",
       "arrowParentheses": "always",
       "quoteProperties": "asNeeded",
       "bracketSameLine": false,

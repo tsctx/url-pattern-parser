@@ -1,8 +1,9 @@
 //@ts-check
-import { unlink, rm } from "node:fs/promises";
+import { rm, unlink } from "node:fs/promises";
 import path from "node:path";
 import { createFileInfo } from "../plugin/_utils.js";
 import { entries } from "../rollup.config.js";
+
 const { __dirname } = createFileInfo(import.meta.url);
 
 /**@param {string} file */

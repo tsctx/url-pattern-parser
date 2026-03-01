@@ -8,8 +8,8 @@ export function createFileInfo(url) {
   const i = "win32" === process.platform;
   let m = new URL(url).pathname;
   return (
-    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
-    // biome-ignore lint/style/noCommaOperator: <explanation>
+    // biome-ignore lint/suspicious/noAssignInExpressions: code golf
+    // biome-ignore lint/complexity/noCommaOperator: code golf
     m.startsWith("/") && i && (m = m.slice(1)),
     {
       __dirname: m
@@ -21,8 +21,8 @@ export function createFileInfo(url) {
   );
 }
 
-import { createRequire as createRequire$ } from "node:module";
 import fs from "node:fs/promises";
+import { createRequire as createRequire$ } from "node:module";
 import path from "node:path";
 /**
  *

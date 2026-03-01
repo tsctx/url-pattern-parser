@@ -11,17 +11,14 @@ function parse(str: string): {
         .split("/")
         .reduce((pattern, part) => {
           if (part === "*") {
-            // biome-ignore lint/style/noParameterAssign: <explanation>
             pattern += "/(?:.*)";
           } else if (part[0] === ":") {
             const optionally = part[part.length - 1] === "?";
-            // biome-ignore lint/style/noParameterAssign: <explanation>
             pattern += optionally ? "(?:/([^/]+?))?" : "/([^/]+?)";
             keys.push(
               part.slice(1, optionally ? part.length - 1 : part.length),
             );
           } else {
-            // biome-ignore lint/style/noParameterAssign: <explanation>
             pattern += `/${escapeRegExp(part)}`;
           }
 
@@ -33,7 +30,7 @@ function parse(str: string): {
 }
 
 function escapeRegExp(str: string): string {
-  return str.replace(/[\\\*\+\.\?\{\}\(\)\[\]\^\$\-\|\/]/g, "\\$&");
+  return str.replace(/[\\*+.?{}()[\]^$\-|/]/g, "\\$&");
 }
 
 export { parse };

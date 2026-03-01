@@ -30,22 +30,24 @@
   },
   "typesVersions": {
     "*": {
-      "router": ["./dist/types/router.d.ts"]
+      "router": [
+        "./dist/types/router.d.ts"
+      ]
     }
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.7.3",
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-replace": "^5.0.5",
+    "@biomejs/biome": "^2.4.4",
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-replace": "^6.0.3",
     "@rollup/plugin-terser": "^0.4.4",
-    "@swc/core": "^1.5.5",
+    "@swc/core": "^1.15.17",
     "rollup": "^4.17.2",
-    "rollup-plugin-swc3": "^0.11.2",
-    "typescript": "^5.4.5"
+    "rollup-plugin-swc3": "^0.12.1",
+    "typescript": "^5.9.3"
   },
   "scripts": {
     "build": "yarn build:rollup && yarn build:types",
@@ -54,10 +56,14 @@
     "prebuild:types": "node ./scripts/pretypes.js",
     "build:types": "tsc -p ./tsconfig.types.json",
     "lint": "biome lint ./",
+    "lint:ci": "biome ci --formatter-enabled=true --linter-enabled=true ./",
     "lint:tsc": "tsc --noEmit",
-    "lint:fix": "biome lint --apply-unsafe ./",
+    "lint:fix": "biome lint --write --unsafe ./",
     "format": "biome format ./",
-    "format:fix": "biome format --write ./"
+    "check": "biome check --formatter-enabled=true --linter-enabled=true --write --unsafe ./",
+    "check:fix": "biome check --formatter-enabled=true --linter-enabled=true --write --unsafe ./",
+    "format:fix": "biome format --write ./",
+    "update:biome": "biome migrate --config-path=biome.json --write && biome migrate --config-path=linter.json --write && biome migrate --config-path=formatter.json --write"
   },
   "repository": {
     "type": "git",
