@@ -52,7 +52,10 @@ class Router<T> {
         handlers.push(...targetHandler);
         const match = pattern.exec(path);
         if (match !== null) {
-          const param = Object.create(null);
+          const param = { __proto__: null } as unknown as Record<
+            string,
+            string
+          >;
           for (let j = 0; j < keys.length; ++j) {
             param[keys[j]] = match[j + 1];
           }

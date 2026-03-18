@@ -66,7 +66,9 @@ function escapeRegExp(str) {
                 handlers.push(...targetHandler);
                 const match = pattern.exec(path);
                 if (match !== null) {
-                    const param = Object.create(null);
+                    const param = {
+                        __proto__: null
+                    };
                     for(let j = 0; j < keys.length; ++j){
                         param[keys[j]] = match[j + 1];
                     }
