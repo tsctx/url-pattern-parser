@@ -12,9 +12,9 @@ function parse(str) {
     const keys = [];
     return {
         keys,
-        pattern: new RegExp(`${(str[0] === "/" ? str.slice(1) : str).split("/").reduce((pattern, part)=>{
+        pattern: new RegExp(`^${(str[0] === "/" ? str.slice(1) : str).split("/").reduce((pattern, part)=>{
             if (part === "*") {
-                pattern += "/(?:.*)";
+                pattern += part[part.length - 1] === "?" ? "(?:/(?:.*))?" : "/(?:.*)";
             } else if (part[0] === ":") {
                 const optionally = part[part.length - 1] === "?";
                 pattern += optionally ? "(?:/([^/]+?))?" : "/([^/]+?)";
@@ -23,7 +23,7 @@ function parse(str) {
                 pattern += `/${escapeRegExp(part)}`;
             }
             return pattern;
-        })}/?$`, "i")
+        }, "")}/?$`, "i")
     };
 }
 function escapeRegExp(str) {

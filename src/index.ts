@@ -7,11 +7,12 @@ function parse(str: string): {
   return {
     keys,
     pattern: new RegExp(
-      `${(str[0] === "/" ? str.slice(1) : str)
+      `^${(str[0] === "/" ? str.slice(1) : str)
         .split("/")
         .reduce((pattern, part) => {
           if (part === "*") {
-            pattern += "/(?:.*)";
+            pattern +=
+              part[part.length - 1] === "?" ? "(?:/(?:.*))?" : "/(?:.*)";
           } else if (part[0] === ":") {
             const optionally = part[part.length - 1] === "?";
             pattern += optionally ? "(?:/([^/]+?))?" : "/([^/]+?)";
@@ -23,7 +24,7 @@ function parse(str: string): {
           }
 
           return pattern;
-        })}/?$`,
+        }, "")}/?$`,
       "i",
     ),
   };
