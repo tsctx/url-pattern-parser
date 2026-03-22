@@ -48,19 +48,14 @@ class Router<T> {
         pattern: { pattern, keys },
         handlers: targetHandler,
       } = target[i];
-      if (pattern.test(path)) {
+      const matched = pattern.exec(path);
+      if (matched !== null) {
         handlers.push(...targetHandler);
-        const match = pattern.exec(path);
-        if (match !== null) {
-          const param = { __proto__: null } as unknown as Record<
-            string,
-            string
-          >;
-          for (let j = 0; j < keys.length; ++j) {
-            param[keys[j]] = match[j + 1];
-          }
-          params.push(param);
+        const param = { __proto__: null } as unknown as Record<string, string>;
+        for (let j = 0; j < keys.length; ++j) {
+          param[keys[j]] = matched[j + 1];
         }
+        params.push(param);
       }
     }
     if (handlers.length !== 0) {

@@ -14,6 +14,7 @@ function parse(str) {
             if (part === "*") {
                 pattern += part[part.length - 1] === "?" ? "(?:/(?:.*))?" : "/(?:.*)";
             } else if (part[0] === ":") {
+                // TODO: segment /([^\]+?)\.([^/]+?)
                 const optionally = part[part.length - 1] === "?";
                 pattern += optionally ? "(?:/([^/]+?))?" : "/([^/]+?)";
                 keys.push(part.slice(1, optionally ? part.length - 1 : part.length));
@@ -62,18 +63,16 @@ function escapeRegExp(str) {
         const target = this.#routes[method] ?? this.#routes.ALL;
         for(let i = 0; i < target.length; ++i){
             const { pattern: { pattern, keys }, handlers: targetHandler } = target[i];
-            if (pattern.test(path)) {
+            const matched = pattern.exec(path);
+            if (matched !== null) {
                 handlers.push(...targetHandler);
-                const match = pattern.exec(path);
-                if (match !== null) {
-                    const param = {
-                        __proto__: null
-                    };
-                    for(let j = 0; j < keys.length; ++j){
-                        param[keys[j]] = match[j + 1];
-                    }
-                    params.push(param);
+                const param = {
+                    __proto__: null
+                };
+                for(let j = 0; j < keys.length; ++j){
+                    param[keys[j]] = matched[j + 1];
                 }
+                params.push(param);
             }
         }
         if (handlers.length !== 0) {

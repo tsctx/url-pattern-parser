@@ -14,6 +14,7 @@ function parse(str: string): {
             pattern +=
               part[part.length - 1] === "?" ? "(?:/(?:.*))?" : "/(?:.*)";
           } else if (part[0] === ":") {
+            // TODO: segment /([^\]+?)\.([^/]+?)
             const optionally = part[part.length - 1] === "?";
             pattern += optionally ? "(?:/([^/]+?))?" : "/([^/]+?)";
             keys.push(
