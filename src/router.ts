@@ -1,6 +1,8 @@
 // Pattern's parser
 import { parse } from ".";
 
+const EMPTY_PARAMS = Object.freeze(Object.create(null));
+
 /**
  * Router using RegExp.
  */
@@ -51,11 +53,18 @@ class Router<T> {
       const matched = pattern.exec(path);
       if (matched !== null) {
         handlers.push(...targetHandler);
-        const param = { __proto__: null } as unknown as Record<string, string>;
-        for (let j = 0; j < keys.length; ++j) {
-          param[keys[j]] = matched[j + 1];
+        if (keys.length === 0) {
+          params.push(EMPTY_PARAMS);
+        } else {
+          const param = { __proto__: null } as unknown as Record<
+            string,
+            string
+          >;
+          for (let j = 0; j < keys.length; ++j) {
+            param[keys[j]] = matched[j + 1];
+          }
+          params.push(param);
         }
-        params.push(param);
       }
     }
     if (handlers.length !== 0) {
