@@ -36,13 +36,16 @@ const EMPTY_PARAMS = Object.freeze(Object.create(null));
  */ class Router {
     #routes;
     constructor(){
-        this.#routes = Object.setPrototypeOf({
+        //@ts-expect-error
+        this.#routes = {
+            __proto__: null,
             ALL: []
-        }, null);
+        };
     }
     add(method, path, ...handlers) {
-        const pattern = parse(path);
+        const pattern = /[:({+*]/.test(path) ? parse(path) : null;
         const info = {
+            path,
             pattern,
             handlers
         };
@@ -63,20 +66,28 @@ const EMPTY_PARAMS = Object.freeze(Object.create(null));
         const params = [];
         const target = this.#routes[method] ?? this.#routes.ALL;
         for(let i = 0; i < target.length; ++i){
-            const { pattern: { pattern, keys }, handlers: targetHandler } = target[i];
-            const matched = pattern.exec(path);
-            if (matched !== null) {
-                handlers.push(...targetHandler);
-                if (keys.length === 0) {
+            const { path: targetPath, pattern: targetPattern, handlers: targetHandler } = target[i];
+            if (targetPattern === null) {
+                if (path === targetPath) {
                     params.push(EMPTY_PARAMS);
-                } else {
-                    const param = {
-                        __proto__: null
-                    };
-                    for(let j = 0; j < keys.length; ++j){
-                        param[keys[j]] = matched[j + 1];
+                    handlers.push(...targetHandler);
+                }
+            } else {
+                const { pattern, keys } = targetPattern;
+                const matched = pattern.exec(path);
+                if (matched !== null) {
+                    handlers.push(...targetHandler);
+                    if (keys.length === 0) {
+                        params.push(EMPTY_PARAMS);
+                    } else {
+                        const param = {
+                            __proto__: null
+                        };
+                        for(let j = 0; j < keys.length; ++j){
+                            param[keys[j]] = matched[j + 1];
+                        }
+                        params.push(param);
                     }
-                    params.push(param);
                 }
             }
         }
